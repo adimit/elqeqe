@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -110,16 +111,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 background: Container(color: Colors.red),
                 onDismissed: (direction) async {
                   // can't await the sql call, we need to delete immediately
-                  setState(() {
-                    currentNotes.removeAt(index);
-                  });
+                  setState(() => currentNotes.removeAt(index));
                   await _deleteNote(currentNote);
                   _replayState();
                   Scaffold.of(context).showSnackBar(SnackBar(
                       content: Text(
                           "Deleted ${currentNote.id}: ${currentNote.text}")));
                 },
-                child: ListTile(title: Text(currentNotes[index].text)));
+                child: ListTile(
+                  title: Text(currentNotes[index].text),
+                  trailing: Text(
+                    timeago.format(
+                        DateTime.fromMillisecondsSinceEpoch(currentNotes[index].localTimestamp))),
+                ));
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
