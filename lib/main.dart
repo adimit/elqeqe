@@ -42,12 +42,25 @@ void main() async {
 }
 
 class EditNoteForm extends StatefulWidget {
+  final void Function(String) saveValue;
+
+  EditNoteForm({this.saveValue});
   @override
-  State<StatefulWidget> createState() => EditNoteState();
+  State<StatefulWidget> createState() => EditNoteState(saveValue: saveValue);
 }
 
 class EditNoteState extends State<EditNoteForm> {
   final _formKey = GlobalKey<FormState>();
+  final _noteEditingController = TextEditingController();
+  final void Function(String) saveValue;
+
+  EditNoteState({this.saveValue});
+
+  @override
+  void dispose() {
+    _noteEditingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -56,6 +69,8 @@ class EditNoteState extends State<EditNoteForm> {
           key: _formKey,
           child: Column(children: <Widget>[
             TextFormField(
+              controller: _noteEditingController,
+              autofocus: true,
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter some text';
@@ -63,10 +78,14 @@ class EditNoteState extends State<EditNoteForm> {
                 return null;
               },
             ),
-            RaisedButton(onPressed: () {
-                if (_formKey.currentState.validate()) {
-                }
-              }, child: Text('Submit'))
+            RaisedButton(
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    saveValue(_noteEditingController.text);
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Text('Submit'))
           ])));
 }
 
@@ -94,8 +113,9 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState(database: database);
 }
 
-Route _createRoute() => PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => EditNoteForm(),
+Route _createRoute(void Function(String) saveValue) => PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        EditNoteForm(saveValue: saveValue),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       final begin = Offset(0.0, 1.0);
       final end = Offset.zero;
@@ -166,7 +186,12 @@ class _MyHomePageState extends State<MyHomePage> {
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(_createRoute());
+          Navigator.of(context).push(_createRoute((value) async {
+            await _insertNote(NotePartial(
+                text: value,
+                localTimestamp: DateTime.now().millisecondsSinceEpoch));
+            _replayState();
+          }));
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),
