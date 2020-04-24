@@ -53,7 +53,8 @@ class EditNoteForm extends StatefulWidget {
 class EditNoteState extends State<EditNoteForm> {
   final _formKey = GlobalKey<FormState>();
   final _noteEditingController = TextEditingController();
-  final _dateEditingController = TextEditingController();
+  var _pickedDate = DateTime.now();
+  final _dateEditingController = TextEditingController(text: timeago.format(DateTime.now()));
   final void Function(String, DateTime) saveValue;
 
   EditNoteState({this.saveValue});
@@ -84,21 +85,22 @@ class EditNoteState extends State<EditNoteForm> {
               controller: _dateEditingController,
               validator: (value) {
                 if (value.isEmpty) {
-                  return 'Please enter some text';
+                  return 'Please enter a date';
                 }
                 return null;
               },
               onTap: () {
-                DatePicker.showDateTimePicker(context,
-                    currentTime: DateTime.now(), onConfirm: (date) {
-                  _dateEditingController.text = date.toString();
+                DatePicker.showDateTimePicker(context, currentTime: _pickedDate,
+                    onConfirm: (date) {
+                  setState(() => _pickedDate = date);
+                  _dateEditingController.text = timeago.format(date);
                 });
               },
             ),
             RaisedButton(
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
-                    saveValue(_noteEditingController.text, DateTime.parse(_dateEditingController.text));
+                    saveValue(_noteEditingController.text, _pickedDate);
                     Navigator.of(context).pop();
                   }
                 },
@@ -130,18 +132,20 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState(database: database);
 }
 
-Route _createRoute(void Function(String, DateTime) saveValue) => PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) =>
-        EditNoteForm(saveValue: saveValue),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final begin = Offset(0.0, 1.0);
-      final end = Offset.zero;
-      final curve = Curves.ease;
-      final tween =
-          Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+Route _createRoute(void Function(String, DateTime) saveValue) =>
+    PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            EditNoteForm(saveValue: saveValue),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final begin = Offset(0.0, 1.0);
+          final end = Offset.zero;
+          final curve = Curves.ease;
+          final tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
-      return SlideTransition(position: animation.drive(tween), child: child);
-    });
+          return SlideTransition(
+              position: animation.drive(tween), child: child);
+        });
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Note> currentNotes = [];
@@ -205,8 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {
           Navigator.of(context).push(_createRoute((textValue, date) async {
             await _insertNote(NotePartial(
-                text: textValue,
-                localTimestamp: date.millisecondsSinceEpoch));
+                text: textValue, localTimestamp: date.millisecondsSinceEpoch));
             _replayState();
           }));
         },
