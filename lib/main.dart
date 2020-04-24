@@ -41,10 +41,33 @@ void main() async {
   runApp(MyApp(database: database));
 }
 
-class EditNote extends StatelessWidget {
+class EditNoteForm extends StatefulWidget {
   @override
-  Widget build(BuildContext context) =>
-      Scaffold(appBar: AppBar(), body: Center(child: Text('hello')));
+  State<StatefulWidget> createState() => EditNoteState();
+}
+
+class EditNoteState extends State<EditNoteForm> {
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+      appBar: AppBar(),
+      body: Form(
+          key: _formKey,
+          child: Column(children: <Widget>[
+            TextFormField(
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+            ),
+            RaisedButton(onPressed: () {
+                if (_formKey.currentState.validate()) {
+                }
+              }, child: Text('Submit'))
+          ])));
 }
 
 class MyApp extends StatelessWidget {
@@ -72,12 +95,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 Route _createRoute() => PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => EditNote(),
+    pageBuilder: (context, animation, secondaryAnimation) => EditNoteForm(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       final begin = Offset(0.0, 1.0);
       final end = Offset.zero;
       final curve = Curves.ease;
-      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      final tween =
+          Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
       return SlideTransition(position: animation.drive(tween), child: child);
     });
