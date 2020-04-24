@@ -41,20 +41,24 @@ void main() async {
   runApp(MyApp(database: database));
 }
 
+class EditNote extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) =>
+      Scaffold(appBar: AppBar(), body: Center(child: Text('hello')));
+}
+
 class MyApp extends StatelessWidget {
   final Database database;
   MyApp({this.database});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page', database: database),
-    );
-  }
+  Widget build(BuildContext context) => MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.orange,
+        ),
+        home: MyHomePage(title: 'Flutter Demo Home Page', database: database),
+      );
 }
 
 class MyHomePage extends StatefulWidget {
@@ -66,6 +70,17 @@ class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState(database: database);
 }
+
+Route _createRoute() => PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => EditNote(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final begin = Offset(0.0, 1.0);
+      final end = Offset.zero;
+      final curve = Curves.ease;
+      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(position: animation.drive(tween), child: child);
+    });
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Note> currentNotes = [];
@@ -120,18 +135,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 child: ListTile(
                   title: Text(currentNotes[index].text),
-                  trailing: Text(
-                    timeago.format(
-                        DateTime.fromMillisecondsSinceEpoch(currentNotes[index].localTimestamp))),
+                  trailing: Text(timeago.format(
+                      DateTime.fromMillisecondsSinceEpoch(
+                          currentNotes[index].localTimestamp))),
                 ));
           }),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final number = random.nextInt(1000);
-          await _insertNote(NotePartial(
-              text: number.toString(),
-              localTimestamp: DateTime.now().millisecondsSinceEpoch));
-          _replayState();
+        onPressed: () {
+          Navigator.of(context).push(_createRoute());
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),
