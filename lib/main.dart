@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:timeago/timeago.dart' as timeago;
 
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -42,7 +43,7 @@ void main() async {
 }
 
 class EditNoteForm extends StatefulWidget {
-  final void Function(String) saveValue;
+  final void Function(String, DateTime) saveValue;
 
   EditNoteForm({this.saveValue});
   @override
@@ -52,7 +53,8 @@ class EditNoteForm extends StatefulWidget {
 class EditNoteState extends State<EditNoteForm> {
   final _formKey = GlobalKey<FormState>();
   final _noteEditingController = TextEditingController();
-  final void Function(String) saveValue;
+  final _dateEditingController = TextEditingController();
+  final void Function(String, DateTime) saveValue;
 
   EditNoteState({this.saveValue});
 
@@ -78,10 +80,25 @@ class EditNoteState extends State<EditNoteForm> {
                 return null;
               },
             ),
+            TextFormField(
+              controller: _dateEditingController,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+              onTap: () {
+                DatePicker.showDateTimePicker(context,
+                    currentTime: DateTime.now(), onConfirm: (date) {
+                  _dateEditingController.text = date.toString();
+                });
+              },
+            ),
             RaisedButton(
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
-                    saveValue(_noteEditingController.text);
+                    saveValue(_noteEditingController.text, DateTime.parse(_dateEditingController.text));
                     Navigator.of(context).pop();
                   }
                 },
@@ -113,7 +130,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState(database: database);
 }
 
-Route _createRoute(void Function(String) saveValue) => PageRouteBuilder(
+Route _createRoute(void Function(String, DateTime) saveValue) => PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) =>
         EditNoteForm(saveValue: saveValue),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -186,10 +203,10 @@ class _MyHomePageState extends State<MyHomePage> {
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(_createRoute((value) async {
+          Navigator.of(context).push(_createRoute((textValue, date) async {
             await _insertNote(NotePartial(
-                text: value,
-                localTimestamp: DateTime.now().millisecondsSinceEpoch));
+                text: textValue,
+                localTimestamp: date.millisecondsSinceEpoch));
             _replayState();
           }));
         },
