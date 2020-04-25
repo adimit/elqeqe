@@ -157,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
       await database.insert('notes', note.toMap());
 
   Future<List<Note>> _notes() async {
-    final List<Map<String, dynamic>> maps = await database.query('notes');
+    final List<Map<String, dynamic>> maps = await database.query('notes', orderBy: 'localTimestamp DESC');
     return List.generate(
         maps.length,
         (i) => Note(
