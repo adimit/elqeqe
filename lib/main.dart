@@ -3,7 +3,8 @@ import './storage.dart';
 import './widgets/noteLog.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // needed for sqflite initialisation
+  WidgetsFlutterBinding
+      .ensureInitialized(); // needed for sqflite initialisation
   final storage = await SqfliteStorage.create();
   runApp(ElqeqeApp(storage));
 }
@@ -21,4 +22,3 @@ class ElqeqeApp extends StatelessWidget {
         home: NoteLog(_database, title: 'Elqeqe'),
       );
 }
-

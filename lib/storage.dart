@@ -41,6 +41,6 @@ class SqfliteStorage extends Storage {
             localTimestamp: maps[i]['localTimestamp']));
   }
 
-  Future<void> deleteNote(Note note) async => await _database
-      .delete("notes", where: "id = ?", whereArgs: [note.id]);
+  Future<void> deleteNote(Note note) async =>
+      await _database.delete("notes", where: "id = ?", whereArgs: [note.id]);
 }

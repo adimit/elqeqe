@@ -79,8 +79,5 @@ class EditNoteState extends State<EditNoteForm> {
                   }
                 },
                 child: Text('Submit'))
-            ]
-          )
-        )
-      );
+          ])));
 }
