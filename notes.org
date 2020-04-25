@@ -1,14 +1,14 @@
 * Tasks
-** Add option to choose date
-** Add option to choose time fuzzily
+** TODO Add option to choose date
+** TODO Add option to choose time fuzzily
 The idea is that instead of choosing a time, you get to choose something like 5 min ago, or 3 hours ago.
-** Replace "a moment ago" with "just now"
-** Wrap timeago calls with our own interface
+** TODO Replace "a moment ago" with "just now"
+** TODO Wrap timeago calls with our own interface
 So we don't have to rely on that particular API.
-** Find a replacement for timeago
+** TODO Find a replacement for timeago
 I don't like that it doesn't handle future times, I'd prefer "just now" and maybe a bit more precision
-** Find a way to display precise times, too
-** Find a way to show duration between events
+** TODO Find a way to display precise times, too
+** TODO Find a way to show duration between events
 an in-between element in the list view?
-** Introduce a list of frecent past events to choose from in editNote
+** TODO Introduce a list of frecent past events to choose from in editNote
 Too much typing, says 🦎!
