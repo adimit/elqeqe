@@ -1,4 +1,3 @@
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -20,7 +19,7 @@ class EditNoteState extends State<EditNoteForm> {
   final _dateEditingController = TextEditingController();
   final void Function(String, DateTime) saveValue;
   final Note initialNote;
-  var _pickedDate;
+  DateTime _pickedDate;
 
   EditNoteState({@required this.saveValue, this.initialNote}) {
     if (initialNote?.localTimestamp != null) {
@@ -63,11 +62,16 @@ class EditNoteState extends State<EditNoteForm> {
                 }
                 return null;
               },
-              onTap: () {
-                DatePicker.showDateTimePicker(context, currentTime: _pickedDate,
-                    onConfirm: (date) {
-                  setState(() => _pickedDate = date);
-                  _dateEditingController.text = timeago.format(date);
+              onTap: () async {
+                final initialTimeOfDay = TimeOfDay(
+                    hour: _pickedDate.hour, minute: _pickedDate.minute);
+                final timeOfDay = (await showTimePicker(
+                    context: context, initialTime: initialTimeOfDay)) ??
+                initialTimeOfDay;
+                setState(() {
+                    _pickedDate = DateTime(_pickedDate.year, _pickedDate.month,
+                      _pickedDate.day, timeOfDay.hour, timeOfDay.minute);
+                    _dateEditingController.text = timeago.format(_pickedDate);
                 });
               },
             ),
