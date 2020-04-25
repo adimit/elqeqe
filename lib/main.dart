@@ -60,16 +60,7 @@ class EditNoteState extends State<EditNoteForm> {
   final void Function(String, DateTime) saveValue;
   final Note initialNote;
 
-  EditNoteState({@required this.saveValue, this.initialNote});
-
-  @override
-  void dispose() {
-    _noteEditingController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  EditNoteState({@required this.saveValue, this.initialNote}) {
     if (initialNote?.localTimestamp != null) {
       _pickedDate =
           DateTime.fromMillisecondsSinceEpoch(initialNote.localTimestamp);
@@ -78,7 +69,16 @@ class EditNoteState extends State<EditNoteForm> {
     }
     _dateEditingController.text = timeago.format(_pickedDate);
     _noteEditingController.text = initialNote?.text ?? "";
-    return Scaffold(
+  }
+
+  @override
+  void dispose() {
+    _noteEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(),
         body: Form(
             key: _formKey,
@@ -118,7 +118,6 @@ class EditNoteState extends State<EditNoteForm> {
                   },
                   child: Text('Submit'))
             ])));
-  }
 }
 
 class MyApp extends StatelessWidget {
