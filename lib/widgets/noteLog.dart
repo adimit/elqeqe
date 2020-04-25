@@ -7,7 +7,7 @@ import '../storage.dart';
 import '../notes.dart';
 import './editNote.dart';
 
-Route _createRoute(
+Route _navigateToEditNote(
         {@required void Function(String, DateTime) saveValue,
         initialNote: Note}) =>
     PageRouteBuilder(
@@ -75,7 +75,7 @@ class _NoteLogState extends State<NoteLog> {
                 },
                 child: ListTile(
                   onTap: () {
-                    Navigator.of(context).push(_createRoute(
+                    Navigator.of(context).push(_navigateToEditNote(
                         saveValue: (textValue, date) async {
                           await _storage.updateNote(Note(
                               id: currentNote.id,
@@ -93,7 +93,7 @@ class _NoteLogState extends State<NoteLog> {
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(_createRoute(
+          Navigator.of(context).push(_navigateToEditNote(
               saveValue: (textValue, date) async {
                 await _storage.insertNote(NotePartial(
                     text: textValue,
