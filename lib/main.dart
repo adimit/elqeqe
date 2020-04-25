@@ -16,7 +16,7 @@ class Note extends NotePartial {
 
   @override
   Map<String, dynamic> toMap() {
-    final map = {'id': id};
+    final Map<String, dynamic> map = {'id': id};
     map.addAll(super.toMap());
     return map;
   }
@@ -44,20 +44,23 @@ void main() async {
 
 class EditNoteForm extends StatefulWidget {
   final void Function(String, DateTime) saveValue;
+  final Note initialNote;
 
-  EditNoteForm({this.saveValue});
+  EditNoteForm({@required this.saveValue, this.initialNote});
   @override
-  State<StatefulWidget> createState() => EditNoteState(saveValue: saveValue);
+  State<StatefulWidget> createState() =>
+      EditNoteState(saveValue: saveValue, initialNote: initialNote);
 }
 
 class EditNoteState extends State<EditNoteForm> {
   final _formKey = GlobalKey<FormState>();
   final _noteEditingController = TextEditingController();
-  var _pickedDate = DateTime.now();
-  final _dateEditingController = TextEditingController(text: timeago.format(DateTime.now()));
+  var _pickedDate;
+  final _dateEditingController = TextEditingController();
   final void Function(String, DateTime) saveValue;
+  final Note initialNote;
 
-  EditNoteState({this.saveValue});
+  EditNoteState({@required this.saveValue, this.initialNote});
 
   @override
   void dispose() {
@@ -66,46 +69,56 @@ class EditNoteState extends State<EditNoteForm> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(),
-      body: Form(
-          key: _formKey,
-          child: Column(children: <Widget>[
-            TextFormField(
-              controller: _noteEditingController,
-              autofocus: true,
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _dateEditingController,
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter a date';
-                }
-                return null;
-              },
-              onTap: () {
-                DatePicker.showDateTimePicker(context, currentTime: _pickedDate,
-                    onConfirm: (date) {
-                  setState(() => _pickedDate = date);
-                  _dateEditingController.text = timeago.format(date);
-                });
-              },
-            ),
-            RaisedButton(
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    saveValue(_noteEditingController.text, _pickedDate);
-                    Navigator.of(context).pop();
+  Widget build(BuildContext context) {
+    if (initialNote?.localTimestamp != null) {
+      _pickedDate =
+          DateTime.fromMillisecondsSinceEpoch(initialNote.localTimestamp);
+    } else {
+      _pickedDate = DateTime.now();
+    }
+    _dateEditingController.text = timeago.format(_pickedDate);
+    _noteEditingController.text = initialNote?.text ?? "";
+    return Scaffold(
+        appBar: AppBar(),
+        body: Form(
+            key: _formKey,
+            child: Column(children: <Widget>[
+              TextFormField(
+                controller: _noteEditingController,
+                autofocus: true,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter some text';
                   }
+                  return null;
                 },
-                child: Text('Submit'))
-          ])));
+              ),
+              TextFormField(
+                controller: _dateEditingController,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a date';
+                  }
+                  return null;
+                },
+                onTap: () {
+                  DatePicker.showDateTimePicker(context,
+                      currentTime: _pickedDate, onConfirm: (date) {
+                    setState(() => _pickedDate = date);
+                    _dateEditingController.text = timeago.format(date);
+                  });
+                },
+              ),
+              RaisedButton(
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      saveValue(_noteEditingController.text, _pickedDate);
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: Text('Submit'))
+            ])));
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -132,10 +145,12 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState(database: database);
 }
 
-Route _createRoute(void Function(String, DateTime) saveValue) =>
+Route _createRoute(
+        {@required void Function(String, DateTime) saveValue,
+        initialNote: Note}) =>
     PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            EditNoteForm(saveValue: saveValue),
+            EditNoteForm(saveValue: saveValue, initialNote: initialNote),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           final begin = Offset(0.0, 1.0);
           final end = Offset.zero;
@@ -156,8 +171,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _insertNote(NotePartial note) async =>
       await database.insert('notes', note.toMap());
 
+  Future<void> _updateNote(Note note) async => await database
+      .update('notes', note.toMap(), where: "id = ?", whereArgs: [note.id]);
+
   Future<List<Note>> _notes() async {
-    final List<Map<String, dynamic>> maps = await database.query('notes', orderBy: 'localTimestamp DESC');
+    final List<Map<String, dynamic>> maps =
+        await database.query('notes', orderBy: 'localTimestamp DESC');
     return List.generate(
         maps.length,
         (i) => Note(
@@ -199,6 +218,18 @@ class _MyHomePageState extends State<MyHomePage> {
                           "Deleted ${currentNote.id}: ${currentNote.text}")));
                 },
                 child: ListTile(
+                  onTap: () {
+                    Navigator.of(context).push(_createRoute(
+                        saveValue: (textValue, date) async {
+                          await _updateNote(Note(
+                              id: currentNote.id,
+                              text: textValue,
+                              localTimestamp: date.millisecondsSinceEpoch
+                          ));
+                          _replayState();
+                        },
+                        initialNote: currentNote));
+                  },
                   title: Text(currentNotes[index].text),
                   trailing: Text(timeago.format(
                       DateTime.fromMillisecondsSinceEpoch(
@@ -207,11 +238,14 @@ class _MyHomePageState extends State<MyHomePage> {
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(_createRoute((textValue, date) async {
-            await _insertNote(NotePartial(
-                text: textValue, localTimestamp: date.millisecondsSinceEpoch));
-            _replayState();
-          }));
+          Navigator.of(context).push(_createRoute(
+              saveValue: (textValue, date) async {
+                await _insertNote(NotePartial(
+                    text: textValue,
+                    localTimestamp: date.millisecondsSinceEpoch));
+                _replayState();
+              },
+              initialNote: null));
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),
