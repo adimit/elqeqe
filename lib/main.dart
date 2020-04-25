@@ -5,12 +5,12 @@ import './widgets/noteLog.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // needed for sqflite initialisation
   final storage = await SqfliteStorage.create();
-  runApp(MyApp(storage));
+  runApp(ElqeqeApp(storage));
 }
 
-class MyApp extends StatelessWidget {
+class ElqeqeApp extends StatelessWidget {
   final Storage _database;
-  MyApp(this._database);
+  ElqeqeApp(this._database);
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.orange,
         ),
-        home: MyHomePage(_database, title: 'Elqeqe'),
+        home: NoteLog(_database, title: 'Elqeqe'),
       );
 }
 

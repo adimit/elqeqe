@@ -24,9 +24,9 @@ Route _createRoute(
               position: animation.drive(tween), child: child);
         });
 
-class MyHomePage extends StatefulWidget {
+class NoteLog extends StatefulWidget {
   final Storage _storage;
-  MyHomePage(
+  NoteLog(
     this._storage, {
     Key key,
     this.title,
@@ -35,14 +35,14 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState(_storage);
+  _NoteLogState createState() => _NoteLogState(_storage);
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _NoteLogState extends State<NoteLog> {
   List<Note> currentNotes = [];
   final Storage _storage;
   final Random random = Random();
-  _MyHomePageState(this._storage);
+  _NoteLogState(this._storage);
 
   Future<void> _replayState() async {
     final notes = await _storage.notes();
