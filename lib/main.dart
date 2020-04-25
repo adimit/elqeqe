@@ -79,45 +79,45 @@ class EditNoteState extends State<EditNoteForm> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(),
-        body: Form(
-            key: _formKey,
-            child: Column(children: <Widget>[
-              TextFormField(
-                controller: _noteEditingController,
-                autofocus: true,
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please enter some text';
+      appBar: AppBar(),
+      body: Form(
+          key: _formKey,
+          child: Column(children: <Widget>[
+            TextFormField(
+              controller: _noteEditingController,
+              autofocus: true,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: _dateEditingController,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter a date';
+                }
+                return null;
+              },
+              onTap: () {
+                DatePicker.showDateTimePicker(context, currentTime: _pickedDate,
+                    onConfirm: (date) {
+                  setState(() => _pickedDate = date);
+                  _dateEditingController.text = timeago.format(date);
+                });
+              },
+            ),
+            RaisedButton(
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    saveValue(_noteEditingController.text, _pickedDate);
+                    Navigator.of(context).pop();
                   }
-                  return null;
                 },
-              ),
-              TextFormField(
-                controller: _dateEditingController,
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please enter a date';
-                  }
-                  return null;
-                },
-                onTap: () {
-                  DatePicker.showDateTimePicker(context,
-                      currentTime: _pickedDate, onConfirm: (date) {
-                    setState(() => _pickedDate = date);
-                    _dateEditingController.text = timeago.format(date);
-                  });
-                },
-              ),
-              RaisedButton(
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      saveValue(_noteEditingController.text, _pickedDate);
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: Text('Submit'))
-            ])));
+                child: Text('Submit'))
+          ])));
 }
 
 class MyApp extends StatelessWidget {
@@ -223,8 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           await _updateNote(Note(
                               id: currentNote.id,
                               text: textValue,
-                              localTimestamp: date.millisecondsSinceEpoch
-                          ));
+                              localTimestamp: date.millisecondsSinceEpoch));
                           _replayState();
                         },
                         initialNote: currentNote));
