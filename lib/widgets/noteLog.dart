@@ -70,8 +70,15 @@ class _NoteLogState extends State<NoteLog> {
                   await _storage.deleteNote(currentNote);
                   _replayState();
                   Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                          "Deleted ${currentNote.id}: ${currentNote.text}")));
+                      content: Row(children: [
+                          Expanded(child: Text("Deleted ${currentNote.id}: ${currentNote.text}")),
+                          OutlineButton(
+                            onPressed: () {
+                              _storage.insertNote(currentNote);
+                              _replayState();
+                            },
+                        child: Text("Undo"))
+                  ])));
                 },
                 child: ListTile(
                   onTap: () {
