@@ -1,27 +1,25 @@
 import 'package:timeago/timeago.dart' as timeago;
 import 'dart:ui';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter/material.dart';
 
 abstract class FormatTime {
   final DateFormat _format;
   FormatTime._(this._format);
-  FormatTime._implicit() : this._(DateFormat.jm().add_yMMMMd());
+  FormatTime(Locale locale)
+      : this._(DateFormat.jm(locale.languageCode).add_yMMMMd());
 
   String fuzzyFormat(DateTime dateTime);
 
   String preciseFormat(DateTime dateTime) => _format.format(dateTime);
-
-  static void getFormatTime(Locale locale) async {
-    await initializeDateFormatting(locale.countryCode);
-  }
 }
 
 class TimeAgoFormatTime extends FormatTime {
-  TimeAgoFormatTime() : super._implicit();
+  TimeAgoFormatTime(Locale locale) : super(locale);
+
+  TimeAgoFormatTime.fromContext(BuildContext context)
+      : this(Localizations.localeOf(context));
 
   @override
-  String fuzzyFormat(DateTime dateTime) {
-    return timeago.format(dateTime);
-  }
+  String fuzzyFormat(DateTime dateTime) => timeago.format(dateTime);
 }
