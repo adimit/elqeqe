@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 import '../notes.dart';
+import '../time.dart';
 
 class EditNoteForm extends StatefulWidget {
   final void Function(String, DateTime) saveValue;
+  final FormatTime formatTime;
   final Note initialNote;
 
-  EditNoteForm({@required this.saveValue, this.initialNote});
+  EditNoteForm(
+      {@required this.saveValue, @required this.formatTime, this.initialNote});
   @override
   State<StatefulWidget> createState() =>
-      EditNoteState(saveValue: saveValue, initialNote: initialNote);
+      EditNoteState(saveValue: saveValue, formatTime: formatTime, initialNote: initialNote);
 }
 
 class EditNoteState extends State<EditNoteForm> {
@@ -19,16 +21,18 @@ class EditNoteState extends State<EditNoteForm> {
   final _dateEditingController = TextEditingController();
   final void Function(String, DateTime) saveValue;
   final Note initialNote;
+  final FormatTime formatTime;
   DateTime _pickedDate;
 
-  EditNoteState({@required this.saveValue, this.initialNote}) {
+  EditNoteState(
+      {@required this.saveValue, @required this.formatTime, this.initialNote}) {
     if (initialNote?.localTimestamp != null) {
       _pickedDate =
           DateTime.fromMillisecondsSinceEpoch(initialNote.localTimestamp);
     } else {
       _pickedDate = DateTime.now();
     }
-    _dateEditingController.text = timeago.format(_pickedDate);
+    _dateEditingController.text = formatTime.format(_pickedDate);
     _noteEditingController.text = initialNote?.text ?? "";
   }
 
@@ -66,12 +70,12 @@ class EditNoteState extends State<EditNoteForm> {
                 final initialTimeOfDay = TimeOfDay(
                     hour: _pickedDate.hour, minute: _pickedDate.minute);
                 final timeOfDay = (await showTimePicker(
-                    context: context, initialTime: initialTimeOfDay)) ??
-                initialTimeOfDay;
+                        context: context, initialTime: initialTimeOfDay)) ??
+                    initialTimeOfDay;
                 setState(() {
-                    _pickedDate = DateTime(_pickedDate.year, _pickedDate.month,
+                  _pickedDate = DateTime(_pickedDate.year, _pickedDate.month,
                       _pickedDate.day, timeOfDay.hour, timeOfDay.minute);
-                    _dateEditingController.text = timeago.format(_pickedDate);
+                  _dateEditingController.text = formatTime.format(_pickedDate);
                 });
               },
             ),
