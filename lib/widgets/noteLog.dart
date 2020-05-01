@@ -104,11 +104,9 @@ class _NoteLogState extends State<NoteLog> {
                         },
                         initialNote: currentNote));
                   },
-                  title: Text(currentNotes[index].text),
-                  trailing: Text(timeago.format(
-                      DateTime.fromMillisecondsSinceEpoch(
-                          currentNotes[index].localTimestamp))),
-                ));
+                  title: Text(currentNote.text),
+                  trailing: Text(timeago.format(currentNote.dateTime)),
+              ));
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

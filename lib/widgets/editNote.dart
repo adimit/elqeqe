@@ -27,8 +27,7 @@ class EditNoteState extends State<EditNoteForm> {
   EditNoteState(
       {@required this.saveValue, @required this.formatTime, this.initialNote}) {
     if (initialNote?.localTimestamp != null) {
-      _pickedDate =
-          DateTime.fromMillisecondsSinceEpoch(initialNote.localTimestamp);
+      _pickedDate = initialNote.dateTime;
     } else {
       _pickedDate = DateTime.now();
     }

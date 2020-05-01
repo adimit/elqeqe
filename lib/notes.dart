@@ -20,4 +20,6 @@ class NotePartial {
 
   Map<String, dynamic> toMap() =>
       {'text': text, 'localTimestamp': localTimestamp};
+
+  DateTime get dateTime => DateTime.fromMillisecondsSinceEpoch(localTimestamp);
 }
