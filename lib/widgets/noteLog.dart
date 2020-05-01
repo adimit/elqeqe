@@ -91,23 +91,28 @@ class _NoteLogState extends State<NoteLog> {
                         child: Text("Undo"))
                   ])));
                 },
-                child: ListTile(
-                  onTap: () {
-                    Navigator.of(context).push(_navigateToEditNote(
-                        _formatTime,
-                        saveValue: (textValue, date) async {
-                          await _storage.updateNote(Note(
-                              id: currentNote.id,
-                              text: textValue,
-                              localTimestamp: date.millisecondsSinceEpoch));
-                          _replayState();
-                        },
-                        initialNote: currentNote));
-                  },
-                  title: Text(currentNote.text),
-                  trailing: Text(timeago.format(currentNote.dateTime)),
-              ));
-          }),
+                child: Tooltip(
+                  message: currentNote.dateTime.toString(),
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.of(context).push(_navigateToEditNote(
+                          _formatTime,
+                          saveValue: (textValue, date) async {
+                            await _storage.updateNote(Note(
+                                id: currentNote.id,
+                                text: textValue,
+                                localTimestamp: date.millisecondsSinceEpoch));
+                            _replayState();
+                          },
+                          initialNote: currentNote));
+                    },
+                    title: Text(currentNote.text),
+                    trailing: Text(timeago.format(currentNote.dateTime)),
+                  )
+                )
+              );
+            }
+          ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(_navigateToEditNote(
