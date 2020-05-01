@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 import 'dart:async';
 import 'dart:math';
@@ -91,25 +90,28 @@ class _NoteLogState extends State<NoteLog> {
                         child: Text("Undo"))
                   ])));
                 },
-                child: ListTile(
-                  onTap: () {
-                    Navigator.of(context).push(_navigateToEditNote(
-                        _formatTime,
-                        saveValue: (textValue, date) async {
-                          await _storage.updateNote(Note(
-                              id: currentNote.id,
-                              text: textValue,
-                              localTimestamp: date.millisecondsSinceEpoch));
-                          _replayState();
-                        },
-                        initialNote: currentNote));
-                  },
-                  title: Text(currentNotes[index].text),
-                  trailing: Text(timeago.format(
-                      DateTime.fromMillisecondsSinceEpoch(
-                          currentNotes[index].localTimestamp))),
-                ));
-          }),
+                child: Tooltip(
+                  message: _formatTime.preciseFormat(currentNote.localTimestamp),
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.of(context).push(_navigateToEditNote(
+                          _formatTime,
+                          saveValue: (textValue, date) async {
+                            await _storage.updateNote(Note(
+                                id: currentNote.id,
+                                text: textValue,
+                                localTimestamp: date));
+                            _replayState();
+                          },
+                          initialNote: currentNote));
+                    },
+                    title: Text(currentNote.text),
+                    trailing: Text(_formatTime.fuzzyFormat(currentNote.localTimestamp)),
+                  )
+                )
+              );
+            }
+          ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(_navigateToEditNote(
@@ -117,7 +119,7 @@ class _NoteLogState extends State<NoteLog> {
               saveValue: (textValue, date) async {
                 await _storage.insertNote(NotePartial(
                     text: textValue,
-                    localTimestamp: date.millisecondsSinceEpoch));
+                    localTimestamp: date));
                 _replayState();
               },
               initialNote: null));

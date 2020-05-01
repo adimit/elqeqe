@@ -27,12 +27,11 @@ class EditNoteState extends State<EditNoteForm> {
   EditNoteState(
       {@required this.saveValue, @required this.formatTime, this.initialNote}) {
     if (initialNote?.localTimestamp != null) {
-      _pickedDate =
-          DateTime.fromMillisecondsSinceEpoch(initialNote.localTimestamp);
+      _pickedDate = initialNote.localTimestamp;
     } else {
       _pickedDate = DateTime.now();
     }
-    _dateEditingController.text = formatTime.format(_pickedDate);
+    _dateEditingController.text = formatTime.fuzzyFormat(_pickedDate);
     _noteEditingController.text = initialNote?.text ?? "";
   }
 
@@ -75,7 +74,7 @@ class EditNoteState extends State<EditNoteForm> {
                 setState(() {
                   _pickedDate = DateTime(_pickedDate.year, _pickedDate.month,
                       _pickedDate.day, timeOfDay.hour, timeOfDay.minute);
-                  _dateEditingController.text = formatTime.format(_pickedDate);
+                  _dateEditingController.text = formatTime.fuzzyFormat(_pickedDate);
                 });
               },
             ),

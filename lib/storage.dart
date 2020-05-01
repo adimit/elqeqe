@@ -25,10 +25,10 @@ class SqfliteStorage extends Storage {
   }
 
   Future<void> insertNote(NotePartial note) async =>
-      await _database.insert('notes', note.toMap());
+      await _database.insert('notes', note.toSqliteMap());
 
   Future<void> updateNote(Note note) async => await _database
-      .update('notes', note.toMap(), where: "id = ?", whereArgs: [note.id]);
+      .update('notes', note.toSqliteMap(), where: "id = ?", whereArgs: [note.id]);
 
   Future<List<Note>> notes() async {
     final List<Map<String, dynamic>> maps =
@@ -38,9 +38,22 @@ class SqfliteStorage extends Storage {
         (i) => Note(
             id: maps[i]['id'],
             text: maps[i]['text'],
-            localTimestamp: maps[i]['localTimestamp']));
+            localTimestamp: DateTime.fromMillisecondsSinceEpoch(
+              maps[i]['localTimestamp'])
+          )
+        );
   }
 
   Future<void> deleteNote(Note note) async =>
       await _database.delete("notes", where: "id = ?", whereArgs: [note.id]);
+}
+
+extension on NotePartial {
+  Map<String, dynamic> toSqliteMap() =>
+      {'text': text, 'localTimestamp': localTimestamp.millisecondsSinceEpoch};
+}
+
+extension on Note {
+  Map<String, dynamic> toSqliteMap() =>
+      {'id': id, 'text': text, 'localTimestamp': localTimestamp.millisecondsSinceEpoch};
 }
