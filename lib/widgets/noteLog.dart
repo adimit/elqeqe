@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 import 'dart:async';
 import 'dart:math';
@@ -92,7 +91,7 @@ class _NoteLogState extends State<NoteLog> {
                   ])));
                 },
                 child: Tooltip(
-                  message: currentNote.localTimestamp.toString(),
+                  message: _formatTime.preciseFormat(currentNote.localTimestamp),
                   child: ListTile(
                     onTap: () {
                       Navigator.of(context).push(_navigateToEditNote(
@@ -107,7 +106,7 @@ class _NoteLogState extends State<NoteLog> {
                           initialNote: currentNote));
                     },
                     title: Text(currentNote.text),
-                    trailing: Text(timeago.format(currentNote.localTimestamp)),
+                    trailing: Text(_formatTime.fuzzyFormat(currentNote.localTimestamp)),
                   )
                 )
               );

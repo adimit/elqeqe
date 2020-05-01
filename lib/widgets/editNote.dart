@@ -31,7 +31,7 @@ class EditNoteState extends State<EditNoteForm> {
     } else {
       _pickedDate = DateTime.now();
     }
-    _dateEditingController.text = formatTime.format(_pickedDate);
+    _dateEditingController.text = formatTime.fuzzyFormat(_pickedDate);
     _noteEditingController.text = initialNote?.text ?? "";
   }
 
@@ -74,7 +74,7 @@ class EditNoteState extends State<EditNoteForm> {
                 setState(() {
                   _pickedDate = DateTime(_pickedDate.year, _pickedDate.month,
                       _pickedDate.day, timeOfDay.hour, timeOfDay.minute);
-                  _dateEditingController.text = formatTime.format(_pickedDate);
+                  _dateEditingController.text = formatTime.fuzzyFormat(_pickedDate);
                 });
               },
             ),
