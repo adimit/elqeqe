@@ -92,7 +92,7 @@ class _NoteLogState extends State<NoteLog> {
                   ])));
                 },
                 child: Tooltip(
-                  message: currentNote.dateTime.toString(),
+                  message: currentNote.localTimestamp.toString(),
                   child: ListTile(
                     onTap: () {
                       Navigator.of(context).push(_navigateToEditNote(
@@ -101,13 +101,13 @@ class _NoteLogState extends State<NoteLog> {
                             await _storage.updateNote(Note(
                                 id: currentNote.id,
                                 text: textValue,
-                                localTimestamp: date.millisecondsSinceEpoch));
+                                localTimestamp: date));
                             _replayState();
                           },
                           initialNote: currentNote));
                     },
                     title: Text(currentNote.text),
-                    trailing: Text(timeago.format(currentNote.dateTime)),
+                    trailing: Text(timeago.format(currentNote.localTimestamp)),
                   )
                 )
               );
@@ -120,7 +120,7 @@ class _NoteLogState extends State<NoteLog> {
               saveValue: (textValue, date) async {
                 await _storage.insertNote(NotePartial(
                     text: textValue,
-                    localTimestamp: date.millisecondsSinceEpoch));
+                    localTimestamp: date));
                 _replayState();
               },
               initialNote: null));
