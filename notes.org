@@ -12,3 +12,7 @@ I don't like that it doesn't handle future times, I'd prefer "just now" and mayb
 an in-between element in the list view?
 ** TODO Introduce a list of frecent past events to choose from in editNote
 Too much typing, says 🦎!
+
+[[https://api.flutter.dev/flutter/material/ExpansionPanelList-class.html][Expansion panel lists]] might be a good UX candidate for the
+suggestions? Only if there's a default focused writeable text field.
+** TODO Provide undo delete in the snackbar notification
