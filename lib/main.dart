@@ -18,17 +18,16 @@ class ElqeqeApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-    localizationsDelegates: [
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
-    ],
-        title: 'Elqeqe',
-        theme: ThemeData(
-          primarySwatch: Colors.orange,
-        ),
-        home: Intermediary(_database)
-      );
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          title: 'Elqeqe',
+          theme: ThemeData(
+            primarySwatch: Colors.orange,
+          ),
+          home: Intermediary(_database));
 }
 
 class Intermediary extends StatelessWidget {
@@ -37,7 +36,6 @@ class Intermediary extends StatelessWidget {
   Intermediary(this._database);
 
   @override
-  Widget build(BuildContext context) {
-    return NoteLog(_database, TimeAgoFormatTime(Localizations.localeOf(context)), title: 'Elqeqe');
-  }
+  Widget build(BuildContext context) =>
+      NoteLog(_database, TimeAgoFormatTime(context), title: 'Elqeqe');
 }

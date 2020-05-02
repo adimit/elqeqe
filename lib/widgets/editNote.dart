@@ -11,8 +11,8 @@ class EditNoteForm extends StatefulWidget {
   EditNoteForm(
       {@required this.saveValue, @required this.formatTime, this.initialNote});
   @override
-  State<StatefulWidget> createState() =>
-      EditNoteState(saveValue: saveValue, formatTime: formatTime, initialNote: initialNote);
+  State<StatefulWidget> createState() => EditNoteState(
+      saveValue: saveValue, formatTime: formatTime, initialNote: initialNote);
 }
 
 class EditNoteState extends State<EditNoteForm> {
@@ -74,7 +74,8 @@ class EditNoteState extends State<EditNoteForm> {
                 setState(() {
                   _pickedDate = DateTime(_pickedDate.year, _pickedDate.month,
                       _pickedDate.day, timeOfDay.hour, timeOfDay.minute);
-                  _dateEditingController.text = formatTime.fuzzyFormat(_pickedDate);
+                  _dateEditingController.text =
+                      formatTime.fuzzyFormat(_pickedDate);
                 });
               },
             ),

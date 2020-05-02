@@ -7,10 +7,10 @@ import '../time.dart';
 import '../notes.dart';
 import './editNote.dart';
 
-Route _navigateToEditNote(
-  FormatTime formatTime,
-  {@required void Function(String, DateTime) saveValue, initialNote: Note}
-) => PageRouteBuilder(
+Route _navigateToEditNote(FormatTime formatTime,
+        {@required void Function(String, DateTime) saveValue,
+        initialNote: Note}) =>
+    PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => EditNoteForm(
             saveValue: saveValue,
             formatTime: formatTime,
@@ -23,10 +23,8 @@ Route _navigateToEditNote(
               Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
           return SlideTransition(
-            position: animation.drive(tween), child: child
-          );
-        }
-      );
+              position: animation.drive(tween), child: child);
+        });
 
 class NoteLog extends StatefulWidget {
   final Storage _storage;
@@ -91,38 +89,32 @@ class _NoteLogState extends State<NoteLog> {
                   ])));
                 },
                 child: Tooltip(
-                  message: _formatTime.preciseFormat(currentNote.localTimestamp),
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.of(context).push(_navigateToEditNote(
-                          _formatTime,
-                          saveValue: (textValue, date) async {
-                            await _storage.updateNote(Note(
-                                id: currentNote.id,
-                                text: textValue,
-                                localTimestamp: date));
-                            _replayState();
-                          },
-                          initialNote: currentNote));
-                    },
-                    title: Text(currentNote.text),
-                    trailing: Text(_formatTime.fuzzyFormat(currentNote.localTimestamp)),
-                  )
-                )
-              );
-            }
-          ),
+                    message:
+                        _formatTime.preciseFormat(currentNote.localTimestamp),
+                    child: ListTile(
+                      onTap: () {
+                        Navigator.of(context).push(_navigateToEditNote(
+                            _formatTime, saveValue: (textValue, date) async {
+                          await _storage.updateNote(Note(
+                              id: currentNote.id,
+                              text: textValue,
+                              localTimestamp: date));
+                          _replayState();
+                        }, initialNote: currentNote));
+                      },
+                      title: Text(currentNote.text),
+                      trailing: Text(
+                          _formatTime.fuzzyFormat(currentNote.localTimestamp)),
+                    )));
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(_navigateToEditNote(
-              _formatTime,
+          Navigator.of(context).push(_navigateToEditNote(_formatTime,
               saveValue: (textValue, date) async {
-                await _storage.insertNote(NotePartial(
-                    text: textValue,
-                    localTimestamp: date));
-                _replayState();
-              },
-              initialNote: null));
+            await _storage
+                .insertNote(NotePartial(text: textValue, localTimestamp: date));
+            _replayState();
+          }, initialNote: null));
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),
