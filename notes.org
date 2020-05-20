@@ -1,5 +1,6 @@
 * Tasks
 ** TODO Add option to choose date
+Add a today/yesterday/Friday/13 Dec label next to the time buttons. Clicking it reveals a date picker. The buttons are no longer centered. The label is wrapped in Expand
 ** DONE Add option to choose time fuzzily
 The idea is that instead of choosing a time, you get to choose something like 5 min ago, or 3 hours ago.
 ** DONE Wrap timeago calls with our own interface
