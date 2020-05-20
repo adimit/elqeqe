@@ -21,10 +21,11 @@ class EditNoteState extends State<EditNoteForm> {
   final void Function(String, DateTime) saveValue;
   final Note initialNote;
   final FormatTime formatTime;
+  final DateTime _now;
   DateTime _pickedDate;
 
-  EditNoteState(
-      {@required this.saveValue, @required this.formatTime, this.initialNote}) {
+  EditNoteState._(
+      this.saveValue, this.formatTime, this.initialNote, this._now) {
     if (initialNote?.localTimestamp != null) {
       _pickedDate = initialNote.localTimestamp;
     } else {
@@ -32,6 +33,9 @@ class EditNoteState extends State<EditNoteForm> {
     }
     _noteEditingController.text = initialNote?.text ?? "";
   }
+
+  EditNoteState({@required saveValue, @required formatTime, initialNote})
+      : this._(saveValue, formatTime, initialNote, DateTime.now());
 
   @override
   void dispose() {
@@ -59,7 +63,7 @@ class EditNoteState extends State<EditNoteForm> {
               setState(() {
                 _pickedDate = dateTime;
               });
-            }, _pickedDate),
+            }, _pickedDate, _now),
             RaisedButton(
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
@@ -76,11 +80,8 @@ class DatePicker extends StatelessWidget {
   final DateTime _pickedDate;
   final DateTime _now;
 
-  const DatePicker._(this._setDateTime, this._pickedDate, this._now, {Key key})
+  const DatePicker(this._setDateTime, this._pickedDate, this._now, {Key key})
       : super(key: key);
-
-  DatePicker(setDateTime, pickedDate, {Key key})
-      : this._(setDateTime, pickedDate, DateTime.now(), key: key);
 
   List<bool> _getSelected() {
     final duration = _now.difference(_pickedDate).inMinutes;
