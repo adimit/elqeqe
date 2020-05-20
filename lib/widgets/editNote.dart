@@ -49,29 +49,34 @@ class EditNoteState extends State<EditNoteForm> {
       body: Form(
           key: _formKey,
           child: Column(children: <Widget>[
-            TextFormField(
-              controller: _noteEditingController,
-              autofocus: true,
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
             DatePicker((dateTime) {
               setState(() {
                 _pickedDate = dateTime;
               });
             }, _pickedDate, _now),
-            RaisedButton(
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    saveValue(_noteEditingController.text, _pickedDate);
-                    Navigator.of(context).pop();
-                  }
-                },
-                child: Text('Submit'))
+            Row(
+              children: <Widget>[
+                Expanded(
+                    child: TextFormField(
+                  controller: _noteEditingController,
+                  autofocus: true,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                )),
+                RaisedButton(
+                    onPressed: () {
+                      if (_formKey.currentState.validate()) {
+                        saveValue(_noteEditingController.text, _pickedDate);
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    child: Text('Submit'))
+              ],
+            ),
           ])));
 }
 
