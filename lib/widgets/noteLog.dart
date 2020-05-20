@@ -12,9 +12,9 @@ Route _navigateToEditNote(FormatTime formatTime,
         initialNote: Note}) =>
     PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => EditNoteForm(
-            saveValue: saveValue,
-            formatTime: formatTime,
-            initialNote: initialNote),
+            saveValue,
+            formatTime,
+            initialNote),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           final begin = Offset(0.0, 1.0);
           final end = Offset.zero;

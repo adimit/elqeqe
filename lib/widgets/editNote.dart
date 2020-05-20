@@ -8,8 +8,7 @@ class EditNoteForm extends StatefulWidget {
   final FormatTime formatTime;
   final Note initialNote;
 
-  EditNoteForm(
-      {@required this.saveValue, @required this.formatTime, this.initialNote});
+  EditNoteForm(this.saveValue, this.formatTime, this.initialNote);
   @override
   State<StatefulWidget> createState() => EditNoteState(
       saveValue: saveValue, formatTime: formatTime, initialNote: initialNote);
@@ -58,15 +57,15 @@ class EditNoteState extends State<EditNoteForm> {
               children: <Widget>[
                 Expanded(
                     child: TextFormField(
-                  controller: _noteEditingController,
-                  autofocus: true,
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
-                )),
+                      controller: _noteEditingController,
+                      autofocus: true,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      },
+                  )),
                 RaisedButton(
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
