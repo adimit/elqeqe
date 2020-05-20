@@ -1,6 +1,6 @@
 * Tasks
 ** TODO Add option to choose date
-** TODO Add option to choose time fuzzily
+** DONE Add option to choose time fuzzily
 The idea is that instead of choosing a time, you get to choose something like 5 min ago, or 3 hours ago.
 ** DONE Wrap timeago calls with our own interface
 So we don't have to rely on that particular API.
