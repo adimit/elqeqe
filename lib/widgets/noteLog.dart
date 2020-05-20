@@ -84,6 +84,7 @@ class _NoteLogState extends State<NoteLog> {
                         onPressed: () {
                           _storage.insertNote(currentNote);
                           _replayState();
+                          Scaffold.of(context).removeCurrentSnackBar();
                         },
                         child: Text("Undo"))
                   ])));

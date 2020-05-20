@@ -20,4 +20,4 @@ suggestions? Only if there's a default focused writeable text field.
 ** TODO Handle very long note text
 ** DONE Render date in device locale
 Current =en_US= for all is truly terrible
-** TODO Prevent clicking on UNDO several times
+** DONE Prevent clicking on UNDO several times
