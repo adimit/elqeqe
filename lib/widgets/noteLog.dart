@@ -8,8 +8,8 @@ import '../notes.dart';
 import './editNote.dart';
 
 Route _navigateToEditNote(FormatTime formatTime,
-        {@required void Function(String, DateTime) saveValue,
-        initialNote: Note}) =>
+        void Function(String, DateTime) saveValue,
+        Note initialNote) =>
     PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => EditNoteForm(
             saveValue,
@@ -95,13 +95,13 @@ class _NoteLogState extends State<NoteLog> {
                     child: ListTile(
                       onTap: () {
                         Navigator.of(context).push(_navigateToEditNote(
-                            _formatTime, saveValue: (textValue, date) async {
+                            _formatTime, (textValue, date) async {
                           await _storage.updateNote(Note(
                               id: currentNote.id,
                               text: textValue,
                               localTimestamp: date));
                           _replayState();
-                        }, initialNote: currentNote));
+                        }, currentNote));
                       },
                       title: Text(currentNote.text),
                       trailing: Text(
@@ -111,11 +111,11 @@ class _NoteLogState extends State<NoteLog> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(_navigateToEditNote(_formatTime,
-              saveValue: (textValue, date) async {
+              (textValue, date) async {
             await _storage
                 .insertNote(NotePartial(text: textValue, localTimestamp: date));
             _replayState();
-          }, initialNote: null));
+          }, null));
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),
